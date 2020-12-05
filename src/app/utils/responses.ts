@@ -1,10 +1,13 @@
 import { Response } from 'express'
 
-export function ContentCreated(res: Response, message?: string, json?: Object) {
-	let responseObject = {}
+export function ContentCreated(res: Response, json: Object) {
+  res.status(201).json(json)
+}
 
-	if (message) responseObject = { ...responseObject, message }
-	if (json) responseObject = { ...responseObject, ...json }
+export function JsonResponse(res: Response, json: Object | undefined) {
+  let responseObject = {}
 
-	return res.status(201).json(responseObject)
+  if (json) responseObject = { ...responseObject, ...json }
+
+  res.status(200).json(responseObject)
 }

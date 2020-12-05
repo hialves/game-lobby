@@ -1,29 +1,29 @@
 import jwt, { Secret } from 'jsonwebtoken'
-import { Response, NextFunction } from 'express'
-import { IUser } from '@interfaces/user'
+import { Request, Response, NextFunction } from 'express'
 
-import { IUserRequest } from '@interfaces/custom'
-import { UnauthorizedException } from 'app/exceptions/auth.exception'
+import { UserEntity } from '@entities/index'
+import { getRepository } from 'typeorm'
+import { UnauthorizedException } from '@exceptions/index'
 
-export const restrict = (
-	req: IUserRequest,
-	res: Response,
-	next: NextFunction,
+export const restrict = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-	const token = req.header('authorization')
+  const token = req.header('authorization')
 
-	if (token) {
-		jwt.verify(token, <Secret>process.env.JWT_KEY, function (err, decoded) {
-			if (err) {
-				next(new UnauthorizedException())
-			} else {
-				const user = <IUser>decoded
-				req.userId = user.id
+  if (token) {
+    const decoded = jwt.verify(token, <Secret>process.env.JWT_KEY) as string
 
-				next()
-			}
-		})
-	} else {
-		next(new UnauthorizedException())
-	}
+    const user = await getRepository(UserEntity).findOne(decoded)
+    if (user) {
+      req.user = <UserEntity>user
+
+      next()
+    } else {
+      next(new UnauthorizedException())
+    }
+  } else {
+    next(new UnauthorizedException())
+  }
 }
