@@ -1,0 +1,9 @@
+export { UnauthorizedException } from './auth.exception'
+export { GameNotFoundException } from './game.exception'
+export { HttpException } from './http.exception'
+export {
+  RoomNotFoundException,
+  UnauthorizedRoomPermissionException,
+} from './room.exception'
+export { InternalServerErrorException } from './server.exception'
+export { UserNotFoundException } from './user.exception'

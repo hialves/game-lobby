@@ -1,7 +1,7 @@
-import HttpException from './http.exception'
+import { HttpException } from './http.exception'
 
 export class UnauthorizedException extends HttpException {
-	constructor() {
-		super(401, `Unauthorized route`)
-	}
+  constructor() {
+    super(401, `Unauthorized route`)
+  }
 }
