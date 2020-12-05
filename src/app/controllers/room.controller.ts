@@ -1,53 +1,45 @@
 import { GameEntity, UserEntity } from '@entities/index'
-import { IUserRequest } from '@interfaces/custom'
 import {
-	RoomNotFoundException,
-	UnauthorizedRoomPermissionException,
-} from 'app/exceptions/room.exception'
-import { UserNotFoundException } from 'app/exceptions/user.exception'
-import Lobby from '@entities/lobby.class'
-import Room from '@entities/room.class'
+  RoomNotFoundException,
+  UnauthorizedRoomPermissionException,
+} from '@exceptions/index'
+import { UserNotFoundException } from '@exceptions/index'
+import Lobby from '@entities/lobby.entity.class'
+import Room from '@entities/room.entity.class'
 import { NextFunction, Request, Response } from 'express'
 import { getRepository } from 'typeorm'
+import { ContentCreated } from 'app/utils/responses'
 
 class RoomController {
-	async byId(req: Request, res: Response, next: NextFunction) {
-		const { id } = req.params
+  async addUser(req: Request, res: Response, next: NextFunction) {
+    const { roomId, usersId } = req.params
 
-		const room = global.lobbies.findFirstRoomWithId(id)
+    const usersIdArray: string[] = Array.from(JSON.parse(usersId))
 
-		if (room === null) {
-			return next(new RoomNotFoundException(id))
-		} else {
-			return res.status(200).json(room)
-		}
-	}
+    const usersData = await getRepository(UserEntity)
+      .createQueryBuilder('user')
+      .whereInIds(usersIdArray)
+      .execute()
 
-	async addUser(req: IUserRequest, res: Response, next: NextFunction) {
-		const { roomId, usersId } = req.params
+    const ownerId = req.user.id
 
-		const usersIdArray: string[] = Array.from(JSON.parse(usersId))
+    const room = global.lobbies.findFirstRoomWithId(roomId)
+    const owner = await getRepository(UserEntity).findOne(ownerId)
 
-		const usersData = await getRepository(UserEntity)
-			.createQueryBuilder('user')
-			.whereInIds(usersIdArray)
-			.execute()
+    if (room && owner && room.owner.id === ownerId) {
+      room.addUsers(usersData)
 
-		const ownerId = req.userId
+      ContentCreated(res, room)
+    } else {
+      if (!room) {
+        next(new RoomNotFoundException(roomId))
+      } else if (room.owner.id !== ownerId) {
+        next(new UnauthorizedRoomPermissionException())
+      }
 
-		const room = global.lobbies.findFirstRoomWithId(roomId)
-		const owner = await getRepository(UserEntity).findOne(ownerId)
-
-		if (!room) return next(new RoomNotFoundException(roomId))
-		if (!owner) return next(new UserNotFoundException(ownerId))
-		if (room.owner.id !== ownerId) {
-			return next(new UnauthorizedRoomPermissionException())
-		}
-
-		room.addUsers(usersData)
-
-		return res.status(201).json(room)
-	}
+      if (!owner) next(new UserNotFoundException(ownerId))
+    }
+  }
 }
 
 export default new RoomController()

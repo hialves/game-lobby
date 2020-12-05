@@ -1,50 +1,54 @@
-import { GameEntity, UserEntity } from '@entities/index'
-import { IUserRequest } from '@interfaces/custom'
-import { GameNotFoundException } from 'app/exceptions/game.exception'
-import { RoomNotFoundException } from 'app/exceptions/room.exception'
-import { UserNotFoundException } from 'app/exceptions/user.exception'
-import Lobby from '@entities/lobby.class'
-import Room from '@entities/room.class'
-import { ContentCreated } from 'app/utils/responses'
 import { NextFunction, Request, Response } from 'express'
 import { getRepository } from 'typeorm'
 
+import { GameEntity, UserEntity } from '@entities/index'
+import {
+  GameNotFoundException,
+  RoomNotFoundException,
+  UserNotFoundException,
+} from '@exceptions/index'
+import Room from '@entities/room.entity.class'
+import { ContentCreated, JsonResponse } from '@utils/responses'
+import { getUserId } from 'app/utils/request'
+
 class LobbyController {
-	async all(req: Request, res: Response) {
-		const rooms = global.lobbies.getRooms()
+  async all(req: Request, res: Response) {
+    const rooms = global.lobbies.getRooms()
 
-		return res.status(200).json(rooms)
-	}
+    JsonResponse(res, rooms)
+  }
 
-	async byId(req: Request, res: Response, next: NextFunction) {
-		const { id } = req.params
+  async byId(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params
 
-		const room = global.lobbies.findFirstRoomWithId(id)
+    const room = global.lobbies.findFirstRoomWithId(id)
 
-		if (room === null) {
-			return next(new RoomNotFoundException(id))
-		} else {
-			return res.status(200).json(room)
-		}
-	}
+    if (room === null) {
+      next(new RoomNotFoundException(id))
+    } else {
+      JsonResponse(res, room)
+    }
+  }
 
-	async createRoom(req: IUserRequest, res: Response, next: NextFunction) {
-		const { title, gameId, maxUsers } = req.params
+  async createRoom(req: Request, res: Response, next: NextFunction) {
+    const { title, gameId, maxUsers } = req.params
 
-		const userId = req.userId
+    const userId = getUserId(req)
 
-		const game = await getRepository(GameEntity).findOne(gameId)
-		const owner = await getRepository(UserEntity).findOne(userId)
+    const game = await getRepository(GameEntity).findOne(gameId)
+    const owner = await getRepository(UserEntity).findOne(userId)
 
-		if (!game) return next(new GameNotFoundException(gameId))
-		if (!owner) return next(new UserNotFoundException(userId))
+    if (game && owner) {
+      const room = new Room(title, Number(maxUsers), owner, game)
 
-		const room = new Room(title, Number(maxUsers), owner, game)
+      global.lobbies.addRoom(room)
 
-		global.lobbies.addRoom(room)
-
-		return ContentCreated(res, 'Room created!', room)
-	}
+      ContentCreated(res, room)
+    } else {
+      if (!game) next(new GameNotFoundException(gameId))
+      if (!owner) next(new UserNotFoundException(userId))
+    }
+  }
 }
 
 export default new LobbyController()
