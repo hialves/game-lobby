@@ -1,13 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { EntityBase } from './base'
+import { Entity, Column } from 'typeorm'
+
+export interface IUser extends EntityBase {
+  nickname: string
+  email: string
+  password: string
+}
 
 @Entity()
-export default class User {
-	@PrimaryGeneratedColumn('uuid')
-	id: string
+class User extends EntityBase implements IUser {
+  @Column({ unique: true })
+  nickname: string
 
-	@Column({ unique: true })
-	nickname: string
+  @Column({ unique: true })
+  email: string
 
-	@Column({ unique: true })
-	email: string
+  @Column()
+  password: string
 }
+
+export default User

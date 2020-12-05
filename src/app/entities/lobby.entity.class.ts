@@ -1,4 +1,4 @@
-import Room from './room.class'
+import Room from './room.entity.class'
 
 export default class Lobby {
 	private rooms: Room[]
