@@ -6,7 +6,7 @@ import { createConnection } from 'typeorm'
 
 import * as routes from '@routes/index'
 import databaseConfig from './config/db'
-import Lobby from '@entities/lobby.class'
+import Lobby from '@entities/lobby.entity.class'
 import { errorHandler } from '@middlewares/error'
 
 global.lobbies = new Lobby()
