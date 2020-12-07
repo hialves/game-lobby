@@ -1,39 +1,37 @@
 import Room from './room.entity.class'
 
-export default class Lobby {
-	private rooms: Room[]
+class Lobby {
+  private static rooms: Room[]
 
-	constructor() {
-		this.rooms = []
-	}
+  constructor() {
+    Lobby.rooms = []
+  }
 
-	getRooms() {
-		return this.rooms
-	}
+  getRooms() {
+    return Lobby.rooms
+  }
 
-	getRoomById(id: string) {
-		return this.findFirstRoomWithId(id)
-	}
+  getRoomById(id: string): Room | undefined {
+    let firstRoom: Room | undefined
 
-	addRoom(room: Room) {
-		this.rooms.push(room)
-	}
+    Lobby.rooms.some(room => {
+      if (room.id === id) {
+        firstRoom = room
 
-	removeRoom(id: string) {
-		this.rooms.filter(r => r.id !== id)
-	}
+        return true
+      }
+    })
 
-	findFirstRoomWithId(id: string): Room | undefined {
-		let firstRoom: Room | undefined
+    return firstRoom
+  }
 
-		this.rooms.some(room => {
-			if (room.id === id) {
-				firstRoom = room
+  addRoom(room: Room) {
+    Lobby.rooms.push(room)
+  }
 
-				return true
-			}
-		})
-
-		return firstRoom
-	}
+  removeRoom(id: string) {
+    Lobby.rooms.filter(r => r.id !== id)
+  }
 }
+
+export default new Lobby()

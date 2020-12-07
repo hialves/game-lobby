@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { GameEntity, UserEntity } from '@entities/index'
+import { GameEntity, UserEntity, Lobby } from '@entities/index'
 
 export default class Room {
   id: string
@@ -37,13 +37,14 @@ export default class Room {
 
   transferOwner(nextOwner: UserEntity) {
     this.owner = nextOwner
+    return this
   }
 
   resetTimer() {
     clearTimeout(this.expireTime)
 
     this.expireTime = setTimeout(() => {
-      global.lobbies.removeRoom(this.id)
+      Lobby.removeRoom(this.id)
     }, 60 * 30)
   }
 }

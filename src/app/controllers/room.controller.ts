@@ -23,7 +23,7 @@ class RoomController {
 
     const ownerId = req.user.id
 
-    const room = global.lobbies.findFirstRoomWithId(roomId)
+    const room = Lobby.getRoomById(roomId)
     const owner = await getRepository(UserEntity).findOne(ownerId)
 
     if (room && owner && room.owner.id === ownerId) {
