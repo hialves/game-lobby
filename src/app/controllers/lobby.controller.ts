@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import { getRepository } from 'typeorm'
 
-import { GameEntity, Lobby, UserEntity } from '@entities/index'
+import { GameEntity, Lobby, UserEntity } from '@entity/index'
 import {
   GameNotFoundException,
   RoomNotFoundException,
   UserNotFoundException,
 } from '@exceptions/index'
-import Room from '@entities/room.entity.class'
+import Room from '@entity/room.entity.class'
 import { ContentCreated, JsonResponse } from '@utils/responses'
 import { getUserId } from 'app/utils/request'
 
@@ -23,7 +23,7 @@ class LobbyController {
 
     const room = Lobby.getRoomById(id)
 
-    if (room === null) {
+    if (!room) {
       next(new RoomNotFoundException(id))
     } else {
       JsonResponse(res, room)
@@ -31,7 +31,7 @@ class LobbyController {
   }
 
   async createRoom(req: Request, res: Response, next: NextFunction) {
-    const { title, gameId, maxUsers } = req.params
+    const { title, gameId, maxUsers } = req.body
 
     const userId = getUserId(req)
 

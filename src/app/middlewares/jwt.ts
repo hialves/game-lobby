@@ -1,7 +1,7 @@
 import jwt, { Secret } from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 
-import { UserEntity } from '@entities/index'
+import { UserEntity } from '@entity/index'
 import { getRepository } from 'typeorm'
 import { UnauthorizedException } from '@exceptions/index'
 

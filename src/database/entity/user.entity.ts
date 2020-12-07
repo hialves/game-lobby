@@ -1,5 +1,6 @@
 import { EntityBase } from './base'
 import { Entity, Column } from 'typeorm'
+import { IsEmail } from 'class-validator'
 
 export interface IUser extends EntityBase {
   nickname: string
@@ -13,9 +14,10 @@ class User extends EntityBase implements IUser {
   nickname: string
 
   @Column({ unique: true })
+  @IsEmail({}, { message: 'You must provide a valid email' })
   email: string
 
-  @Column()
+  @Column({ select: false })
   password: string
 }
 

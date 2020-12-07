@@ -1,7 +1,9 @@
 import { HttpException } from './http.exception'
 
 export class InternalServerErrorException extends HttpException {
-  constructor() {
+  constructor(message: string) {
+    console.log(message)
+
     super(500, `Internal Server Error`)
   }
 }

@@ -2,12 +2,11 @@ import 'dotenv/config'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { createConnection, getRepository } from 'typeorm'
+import { createConnection } from 'typeorm'
 
 import * as routes from '@routes/index'
-import databaseConfig from './config/db'
 import { errorHandler } from '@middlewares/error'
-import { GameEntity, Lobby, Room, UserEntity } from '@entities/index'
+import { logger } from '@middlewares/logger'
 
 class App {
   public app: express.Application
@@ -34,6 +33,7 @@ class App {
     this.app.use(cors())
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }))
+    this.app.use(logger)
   }
 
   private initializeRoutes() {
@@ -45,14 +45,7 @@ class App {
   }
 
   private async connectToTheDatabase() {
-    try {
-      const connection = await createConnection(databaseConfig)
-
-      if (!connection.isConnected) await connection.connect()
-      console.log('Database connected')
-    } catch (e) {
-      console.log(e)
-    }
+    await createConnection()
   }
 }
 export default App

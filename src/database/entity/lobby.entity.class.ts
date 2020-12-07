@@ -1,4 +1,4 @@
-import Room from './room.entity.class'
+import { Room } from '@entity/index'
 
 class Lobby {
   private static rooms: Room[]

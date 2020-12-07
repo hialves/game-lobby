@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { GameEntity, UserEntity, Lobby } from '@entities/index'
+import { GameEntity, UserEntity, Lobby } from '@entity/index'
 
 export default class Room {
   id: string
@@ -27,8 +27,10 @@ export default class Room {
   }
 
   // TODO add only users that aren't inserted
-  addUsers(users: UserEntity[]) {
-    this.users = [...this.users, ...users]
+  addUser(user: UserEntity) {
+    if (this.users.length <= this.maxUsers) {
+      this.users = [...this.users, user]
+    }
   }
 
   removeUser(id: string) {
@@ -40,6 +42,9 @@ export default class Room {
     return this
   }
 
+  /**
+   * Reset timer each time the room has activity
+   */
   resetTimer() {
     clearTimeout(this.expireTime)
 

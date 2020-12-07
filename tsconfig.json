@@ -18,10 +18,10 @@
     "typeRoots": ["./node_modules/@types", "src/@types"],
     "baseUrl": "./src",
     "paths": {
-      "@interfaces/*": ["./app/interfaces/*"],
+      "@repository/*": ["./database/repository/*"],
       "@controllers/*": ["./app/controllers/*"],
       "@middlewares/*": ["./app/middlewares/*"],
-      "@entities/*": ["./app/entities/*"],
+      "@entity/*": ["./database/entity/*"],
       "@exceptions/*": ["./app/exceptions/*"],
       "@jobs/*": ["./app/jobs/*"],
       "@routes/*": ["./app/routes/*"],

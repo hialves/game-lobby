@@ -4,10 +4,14 @@ export function ContentCreated(res: Response, json: Object) {
   res.status(201).json(json)
 }
 
-export function JsonResponse(res: Response, json: Object | undefined) {
-  let responseObject = {}
+export function ContentDeleted(res: Response) {
+  res.status(200)
+}
 
-  if (json) responseObject = { ...responseObject, ...json }
+export function JsonResponse<T>(res: Response, json: Object | Array<T>) {
+  res.status(200).json(json)
+}
 
-  res.status(200).json(responseObject)
+export function JsonErrorValidation<T>(res: Response, json: Object | Array<T>) {
+  res.status(422).json(json)
 }
