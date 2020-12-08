@@ -2,18 +2,26 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { GameEntity, UserEntity, Lobby } from '@entity/index'
 
+export interface IConfigRoom {
+  private: Boolean
+  maxUsers: number
+}
+
 export default class Room {
   id: string
   title: string
   owner: UserEntity
   users: UserEntity[]
-  maxUsers: number
   game: GameEntity
   expireTime: ReturnType<typeof setTimeout>
+  config: {
+    private: Boolean
+    maxUsers: number
+  }
 
   constructor(
     title: string,
-    maxUsers: number,
+    config: IConfigRoom,
     owner: UserEntity,
     game: GameEntity,
   ) {
@@ -21,14 +29,14 @@ export default class Room {
     this.title = title
     this.owner = owner
     this.users = [owner]
-    this.maxUsers = maxUsers
+    this.config = config
     this.game = game
     this.resetTimer()
   }
 
   // TODO add only users that aren't inserted
   addUser(user: UserEntity) {
-    if (this.users.length <= this.maxUsers) {
+    if (this.users.length < this.config.maxUsers) {
       this.users = [...this.users, user]
     }
   }
