@@ -7,8 +7,8 @@ class Lobby {
     Lobby.rooms = []
   }
 
-  getRooms() {
-    return Lobby.rooms
+  getRooms(filter = (r: Room) => true) {
+    return Lobby.rooms.filter(room => filter(room))
   }
 
   getRoomById(id: string): Room | undefined {
