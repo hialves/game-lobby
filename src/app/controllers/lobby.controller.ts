@@ -30,6 +30,14 @@ class LobbyController {
     }
   }
 
+  async getRoomsByGame(req: Request, res: Response, next: NextFunction) {
+    const { game_id } = req.params
+
+    const rooms = Lobby.getRooms(room => room.game.id === game_id)
+
+    JsonResponse(res, rooms)
+  }
+
   async createRoom(req: Request, res: Response, next: NextFunction) {
     const { title, gameId, maxUsers } = req.body
 
