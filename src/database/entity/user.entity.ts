@@ -1,6 +1,6 @@
 import { EntityBase } from './base'
 import { Entity, Column } from 'typeorm'
-import { IsEmail } from 'class-validator'
+import { IsEmail, IsNotEmpty } from 'class-validator'
 
 export interface IUser extends EntityBase {
   nickname: string
@@ -8,16 +8,18 @@ export interface IUser extends EntityBase {
   password: string
 }
 
-@Entity()
+@Entity({ name: 'user' })
 class User extends EntityBase implements IUser {
   @Column({ unique: true })
+  @IsNotEmpty({ message: 'Provide a nickname' })
   nickname: string
 
   @Column({ unique: true })
-  @IsEmail({}, { message: 'You must provide a valid email' })
+  @IsEmail({}, { message: 'Provide a valid email' })
   email: string
 
   @Column({ select: false })
+  @IsNotEmpty({ message: 'Provide a password' })
   password: string
 }
 

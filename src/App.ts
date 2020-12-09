@@ -38,7 +38,7 @@ class App {
 
   private initializeRoutes() {
     Object.values(routes).forEach(router => {
-      this.app.use('/', router)
+      this.app.use(router)
     })
 
     this.app.use(errorHandler)

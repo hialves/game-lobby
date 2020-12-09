@@ -1,10 +1,19 @@
 import { UserEntity } from '@entity/index'
-import { UserNotFoundException } from '@exceptions/index'
-import { JsonErrorValidation, JsonResponse } from '@utils/responses'
+import {
+  InternalServerErrorException,
+  UserNotFoundException,
+} from '@exceptions/index'
+import {
+  ContentCreated,
+  JsonErrorValidation,
+  JsonResponse,
+} from '@utils/responses'
 import { NextFunction, Request, Response } from 'express'
 import { getRepository } from 'typeorm'
 import { validate } from 'class-validator'
 import { validationErrorConfig } from 'config/validate'
+import { hashPassword } from '@utils/helpers'
+import bcrypt from 'bcryptjs'
 
 class UserController {
   async all(req: Request, res: Response) {
@@ -24,16 +33,24 @@ class UserController {
 
   async save(req: Request, res: Response, next: NextFunction) {
     const { nickname, email, password } = req.body
+    try {
+      const hashedPassword = await hashPassword(password)
 
-    const userRepository = getRepository(UserEntity)
-    // TODO hash password
-    const user = userRepository.create(req.body)
+      const userRepository = getRepository(UserEntity)
+      const user = new UserEntity()
+      user.nickname = nickname
+      user.email = email
+      user.password = hashedPassword
 
-    const errors = await validate(user, validationErrorConfig)
-    if (errors.length > 0) {
-      JsonErrorValidation(res, errors)
-    } else {
-      userRepository.save(user)
+      const errors = await validate(user, validationErrorConfig)
+      if (errors.length > 0) {
+        JsonErrorValidation(res, errors)
+      } else {
+        const createdUser = await userRepository.save(user)
+        ContentCreated(res, createdUser)
+      }
+    } catch (e) {
+      next(new InternalServerErrorException(e))
     }
   }
 }
