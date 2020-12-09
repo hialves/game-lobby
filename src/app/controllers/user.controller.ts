@@ -3,17 +3,12 @@ import {
   InternalServerErrorException,
   UserNotFoundException,
 } from '@exceptions/index'
-import {
-  ContentCreated,
-  JsonErrorValidation,
-  JsonResponse,
-} from '@utils/responses'
+import { ContentCreated, JsonResponse } from '@utils/responses'
 import { NextFunction, Request, Response } from 'express'
-import { getRepository } from 'typeorm'
-import { validate } from 'class-validator'
-import { validationErrorConfig } from 'config/validate'
+import { getCustomRepository, getRepository } from 'typeorm'
 import { hashPassword } from '@utils/helpers'
-import bcrypt from 'bcryptjs'
+import { UserRepository } from '@repository/user.repository'
+import { UserFieldAlreadyInUseException } from '@exceptions/user.exception'
 
 class UserController {
   async all(req: Request, res: Response) {
@@ -36,15 +31,16 @@ class UserController {
     try {
       const hashedPassword = await hashPassword(password)
 
-      const userRepository = getRepository(UserEntity)
+      const userRepository = getCustomRepository(UserRepository)
       const user = new UserEntity()
       user.nickname = nickname
       user.email = email
       user.password = hashedPassword
 
-      const errors = await validate(user, validationErrorConfig)
-      if (errors.length > 0) {
-        JsonErrorValidation(res, errors)
+      if (userRepository.checkIfExists('nickname', nickname)) {
+        next(new UserFieldAlreadyInUseException('nickname'))
+      } else if (userRepository.checkIfExists('email', email)) {
+        next(new UserFieldAlreadyInUseException('email'))
       } else {
         const createdUser = await userRepository.save(user)
         ContentCreated(res, createdUser)
@@ -52,6 +48,14 @@ class UserController {
     } catch (e) {
       next(new InternalServerErrorException(e))
     }
+  }
+
+  async checkIfExists(req: Request, res: Response, next: NextFunction) {
+    const { key, value } = req.params
+
+    const userRepository = getCustomRepository(UserRepository)
+
+    return JsonResponse(res, Boolean(userRepository.checkIfExists(key, value)))
   }
 }
 

@@ -9,3 +9,7 @@ export const hashPassword = async (password: string) => {
 export const compareHash = async (password: string, hash: string) => {
   return await bcrypt.compare(password, hash)
 }
+
+export const capitalizeFirst = (value: string) => {
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
