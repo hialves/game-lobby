@@ -11,9 +11,11 @@ export default {
   database: POSTGRES_DB,
 
   entities: ['src/database/entity/*.entity.ts'],
-  migrations: ['src/database/migrations/*.ts'],
+  migrations: ['src/database/migration/*.ts'],
+  subscribers: ['src/database/subscriber/*.subscriber.ts'],
   cli: {
-    migrationsDir: 'src/database/migrations',
+    migrationsDir: 'src/database/migration',
     entitiesDir: 'src/database/entity',
+    subscribersDir: 'src/database/subscriber',
   },
 }

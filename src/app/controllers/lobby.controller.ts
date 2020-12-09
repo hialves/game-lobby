@@ -1,10 +1,16 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, request, Request, response, Response } from 'express'
 import { getRepository } from 'typeorm'
 
 import { GameEntity, Lobby } from '@entity/index'
-import { GameNotFoundException, RoomNotFoundException } from '@exceptions/index'
+import {
+  GameNotFoundException,
+  RoomNotFoundException,
+  UnauthorizedRoomPermissionException,
+  UserNotFoundException,
+} from '@exceptions/index'
 import Room, { IConfigRoom } from '@entity/room.entity.class'
-import { ContentCreated, JsonResponse } from '@utils/responses'
+import { ContentCreated, ContentDeleted, JsonResponse } from '@utils/responses'
+import { OwnerNotFoundException } from '@exceptions/room.exception'
 
 class LobbyController {
   async all(req: Request, res: Response) {
@@ -34,11 +40,11 @@ class LobbyController {
   }
 
   async createRoom(req: Request, res: Response, next: NextFunction) {
-    const { title, gameId, config } = req.body
+    const { title, game_id, config } = req.body
 
     const configRoom = JSON.parse(config) as IConfigRoom
     const owner = req.user
-    const game = await getRepository(GameEntity).findOne(gameId)
+    const game = await getRepository(GameEntity).findOne(game_id)
 
     if (game && owner) {
       const room = new Room(title, configRoom, owner, game)
@@ -47,7 +53,32 @@ class LobbyController {
 
       ContentCreated(res, room)
     } else {
-      if (!game) next(new GameNotFoundException(gameId))
+      if (!game) {
+        next(new GameNotFoundException(game_id))
+      } else if (!owner) {
+        next(new OwnerNotFoundException())
+      }
+    }
+  }
+
+  async removeRoom(req: Request, res: Response, next: NextFunction) {
+    const { room_id } = req.params
+
+    const room = Lobby.getRoomById(room_id)
+    const owner = req.user
+
+    if (room && owner && room.owner.id === owner.id) {
+      Lobby.removeRoom(room_id)
+
+      ContentDeleted(res)
+    } else {
+      if (!room) {
+        next(new RoomNotFoundException(room_id))
+      } else if (room.owner.id !== owner.id) {
+        next(new UnauthorizedRoomPermissionException())
+      } else if (!owner) {
+        next(new OwnerNotFoundException())
+      }
     }
   }
 }

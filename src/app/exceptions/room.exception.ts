@@ -11,3 +11,9 @@ export class UnauthorizedRoomPermissionException extends HttpException {
     super(403, `You do not have permission to execute that action`)
   }
 }
+
+export class OwnerNotFoundException extends HttpException {
+  constructor() {
+    super(404, `Owner of room not found`)
+  }
+}

@@ -13,26 +13,26 @@ import { ContentCreated, ContentDeleted } from 'app/utils/responses'
 class RoomController {
   async addUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { roomId, userId } = req.params
+      const { room_id, user_id } = req.params
 
-      const userData = await getRepository(UserEntity).findOne(userId)
+      const user = await getRepository(UserEntity).findOne(user_id)
 
       const owner = req.user
 
-      const room = Lobby.getRoomById(roomId)
+      const room = Lobby.getRoomById(room_id)
 
-      if (room && owner && room.owner.id === owner.id && userData) {
-        room.addUser(userData)
+      if (room && owner && room.owner.id === owner.id && user) {
+        room.addUser(user)
 
         ContentCreated(res, room)
       } else {
         if (!room) {
-          next(new RoomNotFoundException(roomId))
+          next(new RoomNotFoundException(room_id))
         } else if (room.owner.id !== owner.id) {
           next(new UnauthorizedRoomPermissionException())
+        } else if (!user) {
+          next(new UserNotFoundException(user_id))
         }
-
-        if (!userData) next(new UserNotFoundException(userId))
       }
     } catch (e) {
       next(new InternalServerErrorException(e.message))
@@ -41,26 +41,26 @@ class RoomController {
 
   async removeUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { roomId, userId } = req.params
+      const { room_id, user_id } = req.params
 
-      const userData = await getRepository(UserEntity).findOne(userId)
+      const user = await getRepository(UserEntity).findOne(user_id)
 
       const owner = req.user
 
-      const room = Lobby.getRoomById(roomId)
+      const room = Lobby.getRoomById(room_id)
 
-      if (room && owner && room.owner.id === owner.id && userData) {
-        room.removeUser(userData.id)
+      if (room && owner && room.owner.id === owner.id && user) {
+        room.removeUser(user.id)
 
         ContentDeleted(res)
       } else {
         if (!room) {
-          next(new RoomNotFoundException(roomId))
+          next(new RoomNotFoundException(room_id))
         } else if (room.owner.id !== owner.id) {
           next(new UnauthorizedRoomPermissionException())
+        } else if (!user) {
+          next(new UserNotFoundException(user_id))
         }
-
-        if (!userData) next(new UserNotFoundException(userId))
       }
     } catch (e) {
       next(new InternalServerErrorException(e.message))
