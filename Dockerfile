@@ -11,6 +11,9 @@ COPY . .
 
 RUN npm i
 
+RUN npm uninstall bcryptjs
+RUN npm install bcryptjs
+
 EXPOSE 3333
 
 CMD ["npm", "run", "dev"]
