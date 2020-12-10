@@ -41,13 +41,32 @@ export default class Room {
     }
   }
 
-  removeUser(id: string) {
+  removeUser(id: number) {
     this.users.filter(u => u.id !== id)
   }
 
   transferOwner(nextOwner: UserEntity) {
     this.owner = nextOwner
     return this
+  }
+
+  editRoom(room: Room) {
+    this.title = room.title
+    this.game = room.game
+    this.owner = room.owner
+    this.config = room.config
+    return this
+  }
+
+  toJson() {
+    return {
+      id: this.id,
+      title: this.title,
+      owner: this.owner,
+      game: this.game,
+      users: this.users,
+      config: this.config,
+    }
   }
 
   /**

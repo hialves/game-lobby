@@ -17,3 +17,21 @@ export class OwnerNotFoundException extends HttpException {
     super(404, `Owner of room not found`)
   }
 }
+
+export class UserAlreadyInRoom extends HttpException {
+  constructor() {
+    super(409, 'User already in the room')
+  }
+}
+
+export class UserNotInRoom extends HttpException {
+  constructor() {
+    super(409, "User isn't in the room")
+  }
+}
+
+export class RemovingYourself extends HttpException {
+  constructor() {
+    super(409, 'You cant remove yourself')
+  }
+}
