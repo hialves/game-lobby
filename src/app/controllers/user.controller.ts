@@ -7,7 +7,7 @@ import { ContentCreated, JsonResponse } from '@utils/responses'
 import { NextFunction, Request, Response } from 'express'
 import { getCustomRepository, getRepository } from 'typeorm'
 import { hashPassword } from '@utils/helpers'
-import { UserRepository } from '@repository/user.repository'
+import { UserRepository } from '@repository/index'
 import { UserFieldAlreadyInUseException } from '@exceptions/user.exception'
 
 class UserController {
@@ -18,15 +18,15 @@ class UserController {
   }
 
   async byId(req: Request, res: Response, next: NextFunction) {
-    const { id } = req.params
+    const { user_id } = req.params
 
-    const user = await getRepository(UserEntity).findOne(id)
+    const user = await getRepository(UserEntity).findOne(user_id)
 
     if (user) JsonResponse(res, user)
-    else next(new UserNotFoundException(id))
+    else next(new UserNotFoundException(user_id))
   }
 
-  async save(req: Request, res: Response, next: NextFunction) {
+  async create(req: Request, res: Response, next: NextFunction) {
     const { nickname, email, password } = req.body
     try {
       const hashedPassword = await hashPassword(password)
@@ -37,9 +37,9 @@ class UserController {
       user.email = email
       user.password = hashedPassword
 
-      if (userRepository.checkIfExists('nickname', nickname)) {
+      if (await userRepository.checkIfExists('nickname', nickname)) {
         next(new UserFieldAlreadyInUseException('nickname'))
-      } else if (userRepository.checkIfExists('email', email)) {
+      } else if (await userRepository.checkIfExists('email', email)) {
         next(new UserFieldAlreadyInUseException('email'))
       } else {
         const createdUser = await userRepository.save(user)
@@ -50,12 +50,12 @@ class UserController {
     }
   }
 
-  async checkIfExists(req: Request, res: Response, next: NextFunction) {
+  async checkIfExists(req: Request, res: Response) {
     const { key, value } = req.params
 
     const userRepository = getCustomRepository(UserRepository)
 
-    return JsonResponse(res, Boolean(userRepository.checkIfExists(key, value)))
+    JsonResponse(res, Boolean(await userRepository.checkIfExists(key, value)))
   }
 }
 

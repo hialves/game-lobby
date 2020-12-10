@@ -1,10 +1,10 @@
 import { UserController } from '@controllers/index'
-import { restrict } from '@middlewares/jwt'
 import express from 'express'
 
 const userRoutes = express.Router()
 
+userRoutes.get('/user/:user_id', UserController.byId)
 userRoutes.get('/user/exists/:key/:value', UserController.checkIfExists)
-userRoutes.post('/user', UserController.save)
+userRoutes.post('/user', UserController.create)
 
 export default userRoutes

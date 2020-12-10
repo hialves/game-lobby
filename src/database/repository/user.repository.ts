@@ -3,8 +3,18 @@ import { EntityRepository, Repository } from 'typeorm'
 import { UserEntity } from '@entity/index'
 
 @EntityRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> {
-  checkIfExists(key: string, value: any) {
-    return this.findOne({ where: { [key]: value } })
+export default class UserRepository extends Repository<UserEntity> {
+  async checkIfExists(key: string, value: any) {
+    return await this.findOne({
+      where: `${key} ILIKE '%${value}%'`,
+      select: [
+        'id',
+        'email',
+        'nickname',
+        'password',
+        'created_at',
+        'updated_at',
+      ],
+    })
   }
 }

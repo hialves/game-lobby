@@ -5,13 +5,12 @@ export class UserMigration1607303584916 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE "user" (
         id serial PRIMARY KEY, 
-        nickname VARCHAR (50) UNIQUE NOT NULL, 
+        nickname VARCHAR (100) UNIQUE NOT NULL, 
         email VARCHAR (255) UNIQUE NOT NULL, 
-        password VARCHAR (50) NOT NULL, 
-        created_at TIMESTAMP, 
-        updated_at TIMESTAMP
-      );
-      `,
+        password VARCHAR (255) NOT NULL, 
+        created_at TIMESTAMP DEFAULT NOW(), 
+        updated_at TIMESTAMP DEFAULT NOW()
+      );`,
     )
   }
 
