@@ -1,6 +1,12 @@
-import { PrimaryGeneratedColumn } from 'typeorm'
+import { Column, PrimaryGeneratedColumn } from 'typeorm'
 
 export abstract class EntityBase {
-  @PrimaryGeneratedColumn('uuid')
-  id: string
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column({ default: new Date() })
+  created_at: string
+
+  @Column({ default: new Date() })
+  updated_at: string
 }

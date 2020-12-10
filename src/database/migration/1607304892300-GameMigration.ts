@@ -5,9 +5,9 @@ export class GameMigration1607304892300 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE "game" (
         id serial PRIMARY KEY, 
-        name VARCHAR (50), 
-        created_at TIMESTAMP, 
-        updated_at TIMESTAMP
+        name VARCHAR (50) NOT NULL, 
+        created_at TIMESTAMP DEFAULT NOW(), 
+        updated_at TIMESTAMP DEFAULT NOW()
       );`,
     )
   }

@@ -5,7 +5,7 @@ export function ContentCreated(res: Response, json: Object) {
 }
 
 export function ContentDeleted(res: Response) {
-  res.status(200)
+  res.status(200).json()
 }
 
 export function JsonResponse<T>(res: Response, json: Object | Array<T>) {
