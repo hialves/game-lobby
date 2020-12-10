@@ -1,10 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { EntityBase } from './base'
 
-@Entity()
-export default class Game {
-	@PrimaryGeneratedColumn('uuid')
-	id: string
-
-	@Column()
-	name: string
+export interface IGame extends EntityBase {
+  name: string
 }
+
+@Entity({ name: 'game' })
+class Game extends EntityBase implements IGame {
+  @Column()
+  name: string
+}
+
+export default Game
