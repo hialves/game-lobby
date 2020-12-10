@@ -20,21 +20,21 @@ class LobbyController {
   }
 
   async byId(req: Request, res: Response, next: NextFunction) {
-    const { id } = req.params
+    const { room_id } = req.params
 
-    const room = Lobby.getRoomById(id)
+    const room = Lobby.getRoomById(room_id)
 
     if (!room) {
-      next(new RoomNotFoundException(id))
+      next(new RoomNotFoundException(room_id))
     } else {
       JsonResponse(res, room)
     }
   }
 
-  async getRoomsByGame(req: Request, res: Response, next: NextFunction) {
+  async getRoomsByGame(req: Request, res: Response) {
     const { game_id } = req.params
 
-    const rooms = Lobby.getRooms(room => room.game.id === game_id)
+    const rooms = Lobby.getRooms(room => room.game.id === Number(game_id))
 
     JsonResponse(res, rooms)
   }
@@ -42,7 +42,7 @@ class LobbyController {
   async createRoom(req: Request, res: Response, next: NextFunction) {
     const { title, game_id, config } = req.body
 
-    const configRoom = JSON.parse(config) as IConfigRoom
+    const configRoom = config as IConfigRoom
     const owner = req.user
     const game = await getRepository(GameEntity).findOne(game_id)
 
