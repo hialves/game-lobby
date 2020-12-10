@@ -1,2 +1,5 @@
+export { default as AuthRoutes } from './auth.route'
+export { default as GameRoutes } from './game.route'
 export { default as LobbyRoutes } from './lobby.route'
+export { default as RoomRoutes } from './room.route'
 export { default as UserRoutes } from './user.route'

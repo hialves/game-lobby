@@ -1,2 +1,5 @@
-export { default as UserController } from '@controllers/user.controller'
+export { default as AuthController } from '@controllers/auth.controller'
+export { default as GameController } from '@controllers/game.controller'
 export { default as LobbyController } from '@controllers/lobby.controller'
+export { default as RoomController } from '@controllers/room.controller'
+export { default as UserController } from '@controllers/user.controller'

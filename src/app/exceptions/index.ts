@@ -1,5 +1,8 @@
 export { UnauthorizedException } from './auth.exception'
-export { GameNotFoundException } from './game.exception'
+export {
+  GameNotFoundException,
+  GameAlreadyExistsException,
+} from './game.exception'
 export { HttpException } from './http.exception'
 export {
   RoomNotFoundException,
