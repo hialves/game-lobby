@@ -9,6 +9,8 @@ import { getCustomRepository, getRepository } from 'typeorm'
 import { hashPassword } from '@utils/helpers'
 import { UserRepository } from '@repository/index'
 import { UserFieldAlreadyInUseException } from '@exceptions/user.exception'
+import Queue from '@services/queue'
+import RegistrationMail from '@jobs/registration-mail'
 
 class UserController {
   async all(req: Request, res: Response) {
@@ -43,6 +45,9 @@ class UserController {
         next(new UserFieldAlreadyInUseException('email'))
       } else {
         const createdUser = await userRepository.save(user)
+
+        await Queue.add(RegistrationMail.key, { user })
+
         ContentCreated(res, createdUser)
       }
     } catch (e) {

@@ -7,7 +7,6 @@ services:
     command: npm run dev
     depends_on:
       - postgres
-      - redis
     volumes:
       - .:/usr/game-lobby
     networks:
@@ -52,8 +51,9 @@ services:
     ports:
       - '6379:6379'
     environment:
-      - ALLOW_EMPTY_PASSWORD=no
-      - REDIS_PASSWORD=${REDIS_PASS}
+      ALLOW_EMPTY_PASSWORD: 'no'
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     networks:
       - game-lobby-network
 

@@ -21,12 +21,15 @@
     "paths": {
       "@repository/*": ["./database/repository/*"],
       "@controllers/*": ["./app/controllers/*"],
+      "@config/*": ["./config/*"],
       "@middlewares/*": ["./app/middlewares/*"],
+      "@interfaces/*": ["./interfaces/*"],
       "@entity/*": ["./database/entity/*"],
       "@exceptions/*": ["./app/exceptions/*"],
       "@jobs/*": ["./app/jobs/*"],
       "@routes/*": ["./app/routes/*"],
-      "@utils/*": ["./app/utils/*"]
+      "@utils/*": ["./app/utils/*"],
+      "@services/*": ["./app/services/*"]
     }
   },
   "include": ["src", "__tests__"]
