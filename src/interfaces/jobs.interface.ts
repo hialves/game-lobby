@@ -1,4 +1,3 @@
-import { IDataMail } from '@interfaces/mail.interface'
 import { JobOptions } from 'bull'
 
 export interface Job {

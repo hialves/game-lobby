@@ -32,6 +32,10 @@ class Lobby {
   removeRoom(id: string) {
     Lobby.rooms.filter(r => r.id !== id)
   }
+
+  removeAllRooms() {
+    Lobby.rooms = []
+  }
 }
 
 export default new Lobby()
