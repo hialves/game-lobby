@@ -2,7 +2,7 @@ import { EntityBase } from './base'
 import { Entity, Column } from 'typeorm'
 import { IsEmail, IsNotEmpty } from 'class-validator'
 
-export interface IUser extends EntityBase {
+export interface IUser {
   nickname: string
   email: string
   password: string

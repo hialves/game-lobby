@@ -10,7 +10,7 @@ import { ContentCreated, ContentDeleted, JsonResponse } from '@utils/responses'
 import { GameRepository } from '@repository/index'
 import { GameAlreadyExistsException } from '@exceptions/index'
 import { isValid } from '@utils/helpers'
-import { GameProvideFieldException } from '@exceptions/game.exception'
+import { InvalidFieldValueException } from '@exceptions/server.exception'
 
 class GameController {
   async all(req: Request, res: Response) {
@@ -38,7 +38,7 @@ class GameController {
       if (await gameRepository.checkIfExists('name', name)) {
         next(new GameAlreadyExistsException(name))
       } else if (!isValid(name)) {
-        next(new GameProvideFieldException('name'))
+        next(new InvalidFieldValueException('name'))
       } else {
         const createdGame = await gameRepository.save(game)
 

@@ -34,7 +34,7 @@ class LobbyController {
   async getRoomsByGame(req: Request, res: Response) {
     const { game_id } = req.params
 
-    const rooms = Lobby.getRooms(room => room.game.id === Number(game_id))
+    const rooms = Lobby.getRooms((room) => room.game.id === Number(game_id))
 
     JsonResponse(res, rooms)
   }
@@ -51,7 +51,7 @@ class LobbyController {
 
       Lobby.addRoom(room)
 
-      ContentCreated(res, room)
+      ContentCreated(res, room.toJson())
     } else {
       if (!game) {
         next(new GameNotFoundException(game_id))

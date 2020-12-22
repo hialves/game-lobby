@@ -12,9 +12,3 @@ export class GameAlreadyExistsException extends HttpException {
     super(409, `${capitalizeFirst(name)} already exists`)
   }
 }
-
-export class GameProvideFieldException extends HttpException {
-  constructor(field: string) {
-    super(409, `${capitalizeFirst(field)} must be provided`)
-  }
-}

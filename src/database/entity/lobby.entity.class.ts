@@ -30,7 +30,7 @@ class Lobby {
   }
 
   removeRoom(id: string) {
-    Lobby.rooms.filter(r => r.id !== id)
+    Lobby.rooms = Lobby.rooms.filter(r => r.id !== id)
   }
 
   removeAllRooms() {

@@ -22,6 +22,7 @@ export default {
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   collectCoverageFrom: [
     'src/**',
+    '!/src/*.ts',
     '!src/@types/**',
     '!src/database/migration/**',
     '!src/database/repository/**',
@@ -33,7 +34,7 @@ export default {
   coverageDirectory: '__tests__/coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: ['/node_modules/', '*.d.ts'],
+  coveragePathIgnorePatterns: ['/node_modules/'],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: 'v8',

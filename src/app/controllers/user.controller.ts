@@ -6,11 +6,10 @@ import {
 import { ContentCreated, JsonResponse } from '@utils/responses'
 import { NextFunction, Request, Response } from 'express'
 import { getCustomRepository, getRepository } from 'typeorm'
-import { hashPassword } from '@utils/helpers'
 import { UserRepository } from '@repository/index'
-import { UserFieldAlreadyInUseException } from '@exceptions/user.exception'
 import Queue from '@services/queue'
 import RegistrationMail from '@jobs/registration-mail'
+import UserValidator from './validators/user.validator'
 
 class UserController {
   async all(req: Request, res: Response) {
@@ -30,20 +29,16 @@ class UserController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     const { nickname, email, password } = req.body
+
     try {
-      const hashedPassword = await hashPassword(password)
-
       const userRepository = getCustomRepository(UserRepository)
-      const user = new UserEntity()
-      user.nickname = nickname
-      user.email = email
-      user.password = hashedPassword
 
-      if (await userRepository.checkIfExists('nickname', nickname)) {
-        next(new UserFieldAlreadyInUseException('nickname'))
-      } else if (await userRepository.checkIfExists('email', email)) {
-        next(new UserFieldAlreadyInUseException('email'))
-      } else {
+      if (await UserValidator.create(req.body, next)) {
+        const user = new UserEntity()
+        user.nickname = nickname
+        user.email = email
+        user.password = password
+
         const createdUser = await userRepository.save(user)
 
         await Queue.add(RegistrationMail.key, { user })

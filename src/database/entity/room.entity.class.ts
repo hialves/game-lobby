@@ -77,6 +77,7 @@ export default class Room {
 
     this.expireTime = setTimeout(() => {
       Lobby.removeRoom(this.id)
-    }, 60 * 30)
+      // 30mins to reset
+    }, 1000 * 60 * 30)
   }
 }
