@@ -1,8 +1,13 @@
+import { GameEntity, Lobby, UserEntity } from '@entity/index'
 import { getConnection, getManager } from 'typeorm'
 
 export const truncate = async () => {
-  await getManager().query('TRUNCATE TABLE "user"')
-  await getManager().query('TRUNCATE TABLE "game"')
+  await getManager().clear(UserEntity)
+  await getManager().clear(GameEntity)
+}
+
+export const clearLobby = () => {
+  Lobby.removeAllRooms()
 }
 
 export const revertMigrations = async () => {
